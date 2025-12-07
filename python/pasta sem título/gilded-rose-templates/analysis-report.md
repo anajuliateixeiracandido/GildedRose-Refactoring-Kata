@@ -14,9 +14,9 @@
 ```
 [List all source files with brief descriptions]
 Example:
-├── gilded_rose.py (Main update logic - 85 lines)
-├── item.py (Item class definition - 15 lines)
-└── test_gilded_rose.py (Existing tests - if any)
+├── gilded_rose.py (Item class and GildedRose update logic)
+├── texttest_fixture.py (Test fixture for approval testing / golden master)
+└── test_gilded_rose.py (Unit tests - if any)
 ```
 
 ### Class Overview

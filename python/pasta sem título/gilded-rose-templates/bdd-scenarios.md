@@ -47,6 +47,7 @@ Feature: Normal Item Quality Degradation
     Then the quality should be 0
     And the sellIn should be 4
 
+
   Scenario Outline: Normal item quality over multiple days
     Given a normal item with sellIn <initial_sellIn> and quality <initial_quality>
     When <days> days pass
@@ -97,11 +98,12 @@ Feature: Aged Brie Quality Improvement
     Then the quality should be 50
     And the sellIn should be 4
 
-  Scenario: Aged Brie approaching maximum quality after sell date
-    Given an Aged Brie with sellIn -1 and quality 49
+  Scenario: Aged Brie at 48 after sell date trying to add 2
+    Given an Aged Brie with sellIn -1 and quality 48
     When the system updates quality
     Then the quality should be 50
     And the sellIn should be -2
+    
 ```
 
 ---
@@ -134,6 +136,7 @@ Feature: Sulfuras Legendary Item Properties
     When the system updates quality
     Then the quality should be 80
     And the sellIn should be -1
+
 ```
 
 ---
@@ -167,7 +170,7 @@ Feature: Backstage Pass Concert Dynamics
     Then the quality should be 23
     And the sellIn should be 4
 
-  Scenario: Backstage pass becomes worthless after concert
+  Scenario: Backstage pass on concert day (sellIn 0)
     Given a Backstage pass with sellIn 0 and quality 20
     When the system updates quality
     Then the quality should be 0
@@ -179,6 +182,30 @@ Feature: Backstage Pass Concert Dynamics
     Then the quality should be 50
     And the sellIn should be 4
 
+  Scenario: Backstage pass crosses 10-day threshold
+    Given a Backstage pass with sellIn 11 and quality 20
+    When the system updates quality
+    Then the quality should be 21
+    And the sellIn should be 10
+
+  Scenario: Backstage pass crosses 5-day threshold
+    Given a Backstage pass with sellIn 6 and quality 20
+    When the system updates quality
+    Then the quality should be 22
+    And the sellIn should be 5
+
+  Scenario: Backstage pass quality 49 caps at 50 with +2 increment
+    Given a Backstage pass with sellIn 10 and quality 49
+    When the system updates quality
+    Then the quality should be 50
+    And the sellIn should be 9
+
+  Scenario: Backstage pass quality 47 caps at 50 with +3 increment
+    Given a Backstage pass with sellIn 5 and quality 47
+    When the system updates quality
+    Then the quality should be 50
+    And the sellIn should be 4
+    
   Scenario Outline: Backstage pass quality progression to concert
     Given a Backstage pass with sellIn <initial_sellIn> and quality <initial_quality>
     When <days> days pass
@@ -223,6 +250,13 @@ Feature: Conjured Item Accelerated Degradation
     When the system updates quality
     Then the quality should be 0
     And the sellIn should be 4
+
+  Scenario: Conjured item on sell date (sellIn 0)
+    Given a Conjured item with sellIn 0 and quality 10
+    When the system updates quality
+    Then the quality should be 6
+    And the sellIn should be -1
+    # Quality decreases by 2 first, then by 2 again after sellIn becomes negative (total -4)
 ```
 
 ---
