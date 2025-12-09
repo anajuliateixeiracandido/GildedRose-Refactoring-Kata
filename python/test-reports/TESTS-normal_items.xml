@@ -1,0 +1,194 @@
+<testsuite name="normal_items.Normal Item Quality Degradation" tests="13" errors="0" failures="0" skipped="0" time="0.014725" timestamp="2025-12-08T23:14:20.026838" hostname="2445ANACANDIDO.local"><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item quality decreases by 1 before sell date" status="passed" time="0.000671"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @smoke
+  Scenario: Normal item quality decreases by 1 before sell date
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a normal item with sellIn 5 and quality 10 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 9 ... passed in 0.000s
+    And the sellIn should be 4 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item quality decreases by 2 on sell date (transition day)" status="passed" time="0.001527"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @transition
+  Scenario: Normal item quality decreases by 2 on sell date (transition day)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a normal item with sellIn 0 and quality 10 ... passed in 0.000s
+    When the system updates quality ... passed in 0.001s
+    Then the quality should be 8 ... passed in 0.000s
+    And the sellIn should be -1 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item quality decreases by 2 after sell date" status="passed" time="0.000832"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: Normal item quality decreases by 2 after sell date
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a normal item with sellIn -1 and quality 10 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 8 ... passed in 0.000s
+    And the sellIn should be -2 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item quality never goes negative" status="passed" time="0.000814"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @edge_case @quality_floor
+  Scenario: Normal item quality never goes negative
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a normal item with sellIn 5 and quality 0 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 0 ... passed in 0.000s
+    And the sellIn should be 4 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item with quality 1 after sell date goes to 0" status="passed" time="0.000941"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @edge_case @quality_floor
+  Scenario: Normal item with quality 1 after sell date goes to 0
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a normal item with sellIn -1 and quality 1 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 0 ... passed in 0.000s
+    And the sellIn should be -2 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item with quality 2 after sell date goes to 0" status="passed" time="0.001284"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @edge_case @quality_floor
+  Scenario: Normal item with quality 2 after sell date goes to 0
+    Given the Gilded Rose inventory system ... passed in 0.001s
+    Given a normal item with sellIn -1 and quality 2 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 0 ... passed in 0.000s
+    And the sellIn should be -2 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item with very negative sellIn still degrades by 2" status="passed" time="0.001472"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @regression
+  Scenario: Normal item with very negative sellIn still degrades by 2
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a normal item with sellIn -10 and quality 10 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 8 ... passed in 0.000s
+    And the sellIn should be -11 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item quality degradation over time -- @1.1 " status="passed" time="0.001767"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.1 
+    Given the Gilded Rose inventory system ... passed in 0.001s
+    Given a normal item with sellIn 10 and quality 20 ... passed in 0.001s
+    When 1 days pass ... passed in 0.000s
+    Then the quality should be 19 ... passed in 0.000s
+    And the sellIn should be 9 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item quality degradation over time -- @1.2 " status="passed" time="0.001016"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.2 
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a normal item with sellIn 10 and quality 20 ... passed in 0.001s
+    When 5 days pass ... passed in 0.000s
+    Then the quality should be 15 ... passed in 0.000s
+    And the sellIn should be 5 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item quality degradation over time -- @1.3 " status="passed" time="0.001248"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.3 
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a normal item with sellIn 5 and quality 10 ... passed in 0.000s
+    When 5 days pass ... passed in 0.000s
+    Then the quality should be 5 ... passed in 0.000s
+    And the sellIn should be 0 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item quality degradation over time -- @1.4 " status="passed" time="0.001048"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.4 
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a normal item with sellIn 2 and quality 10 ... passed in 0.000s
+    When 3 days pass ... passed in 0.000s
+    Then the quality should be 6 ... passed in 0.000s
+    And the sellIn should be -1 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item quality degradation over time -- @1.5 " status="passed" time="0.001011"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.5 
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a normal item with sellIn 0 and quality 10 ... passed in 0.000s
+    When 1 days pass ... passed in 0.000s
+    Then the quality should be 8 ... passed in 0.000s
+    And the sellIn should be -1 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="normal_items.Normal Item Quality Degradation" name="Normal item quality degradation over time -- @1.6 " status="passed" time="0.001093"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.6 
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a normal item with sellIn -1 and quality 10 ... passed in 0.000s
+    When 1 days pass ... passed in 0.000s
+    Then the quality should be 8 ... passed in 0.000s
+    And the sellIn should be -2 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>

@@ -48,30 +48,25 @@ Feature: Normal Item Quality Degradation
     Then the quality should be 0
     And the sellIn should be -2
 
-  @edge_case
-  Scenario: Normal item with very negative sell_in still degrades by 2
+  @regression
+  Scenario: Normal item with very negative sellIn still degrades by 2
     Given a normal item with sellIn -10 and quality 10
     When the system updates quality
     Then the quality should be 8
     And the sellIn should be -11
 
-  @regression
-  Scenario: Normal item quality over 5 days before sell date
-    Given a normal item with sellIn 10 and quality 20
-    When 5 days pass
-    Then the quality should be 15
-    And the sellIn should be 5
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time
+    Given a normal item with sellIn <initial_sellIn> and quality <initial_quality>
+    When <days> days pass
+    Then the quality should be <final_quality>
+    And the sellIn should be <final_sellIn>
 
-  @regression
-  Scenario: Normal item crossing sell date
-    Given a normal item with sellIn 2 and quality 10
-    When 3 days pass
-    Then the quality should be 6
-    And the sellIn should be -1
-
-  @edge_case
-  Scenario: Normal item starting at high quality
-    Given a normal item with sellIn 5 and quality 50
-    When the system updates quality
-    Then the quality should be 49
-    And the sellIn should be 4
+    Examples:
+      | initial_sellIn | initial_quality | days | final_quality | final_sellIn |
+      | 10             | 20              | 1    | 19            | 9            |
+      | 10             | 20              | 5    | 15            | 5            |
+      | 5              | 10              | 5    | 5             | 0            |
+      | 2              | 10              | 3    | 6             | -1           |
+      | 0              | 10              | 1    | 8             | -1           |
+      | -1             | 10              | 1    | 8             | -2           |

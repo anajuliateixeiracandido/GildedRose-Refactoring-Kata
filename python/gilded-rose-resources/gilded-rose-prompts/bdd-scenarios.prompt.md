@@ -179,6 +179,74 @@ Feature: Item Quality Management
 
 ---
 
+## 🚨 CRITICAL: BDD SCENARIO REQUIREMENTS (MANDATORY)
+
+### ❌ PROHIBITED PATTERNS IN SCENARIOS
+
+#### 1. Incomplete Assertions (NEVER DO THIS)
+```gherkin
+# ❌ WRONG - Only validates quality, ignores sell_in
+Scenario: Normal item degrades
+  Given a normal item with quality 10 and sellIn 5
+  When we update quality
+  Then the quality should be 9
+  # MISSING: And the sellIn should be 4
+
+# ✅ CORRECT - Validates ALL affected properties
+Scenario: Normal item degrades before sell date
+  Given a normal item with quality 10 and sellIn 5
+  When we update quality
+  Then the quality should be 9
+  And the sellIn should be 4
+  And the name should not change
+```
+
+**WHY CRITICAL**: Incomplete assertions let mutants survive. Tests must verify ALL state changes.
+
+#### 2. Hardcoded Values Without Context
+```gherkin
+# ❌ WRONG - Magic numbers without meaning
+Then the quality should be 50
+Then the quality should be 80
+
+# ✅ CORRECT - Use descriptive language
+Then the quality should be at maximum (50)
+Then the quality should remain at Sulfuras quality (80)
+```
+
+#### 3. Vague Scenario Descriptions
+```gherkin
+# ❌ WRONG - Unclear behavior
+Scenario: Item updates correctly
+
+# ✅ CORRECT - Specific behavior
+Scenario: Normal item loses 1 quality per day before sell date
+```
+
+### ✅ MANDATORY PATTERNS FOR ALL SCENARIOS
+
+#### Complete State Validation Template
+```gherkin
+Scenario: [Specific behavior being tested]
+  Given [item type] with quality [value] and sellIn [value]
+  When we update quality
+  Then the quality should be [expected_value]
+  And the sellIn should be [expected_value]
+  And the name should not change
+```
+
+#### Multi-Day Scenarios Must Show Progression
+```gherkin
+Scenario: Aged Brie increases quality over multiple days
+  Given an Aged Brie with quality 20 and sellIn 5
+  When we update quality for 3 days
+  Then the quality should be 23
+  And the sellIn should be 2
+  # Explanation: +1 quality per day = 20 + 3 = 23
+```
+
+---
+
 ## BDD SCENARIO CHECKLIST
 
 ### Happy Paths (Normal Behavior)quality degradation before/after sell date
@@ -660,6 +728,13 @@ Before considering BDD mode complete:
 - [ ] All boundary conditions covered
 - [ ] Scenario outlines used for data-driven tests
 
+### 🚫 Assertion Completeness (CRITICAL)
+- [ ] **EVERY scenario validates BOTH quality AND sellIn** (not just quality)
+- [ ] **EVERY scenario confirms item name doesn't change**
+- [ ] **Multi-day scenarios show progression** with clear calculations
+- [ ] **NO scenarios with only quality assertion** - must include sellIn
+- [ ] **Edge cases validate all constraints** (max/min quality, Sulfuras constant)
+
 ### Edge Case Coverage
 - [ ] All transition days (sell_in = 0) covered for each item type
 - [ ] Backstage threshold crossings (11→10, 6→5) covered
@@ -693,6 +768,80 @@ Before considering BDD mode complete:
 ---
 
 ## PYTHON 3 STEP DEFINITIONS BEST PRACTICES
+
+### MANDATORY: Use Constants Module
+
+**Step definitions MUST use constants.py for all item names and magic values.**
+
+```python
+# constants.py (REQUIRED)
+\"\"\"Constants for Gilded Rose business rules.\"\"\"
+
+# Item names
+NORMAL_ITEM = \"Normal Item\"
+AGED_BRIE = \"Aged Brie\"
+BACKSTAGE_PASSES = \"Backstage passes to a TAFKAL80ETC concert\"
+SULFURAS = \"Sulfuras, Hand of Ragnaros\"
+CONJURED = \"Conjured\"
+
+# Quality constraints
+MAX_QUALITY = 50
+MIN_QUALITY = 0
+SULFURAS_QUALITY = 80
+
+# steps.py - CORRECT Usage
+from constants import AGED_BRIE, MAX_QUALITY, SULFURAS, SULFURAS_QUALITY
+
+@given('an Aged Brie with sellIn {sell_in:d} and quality {quality:d}')
+def step_aged_brie(context, sell_in, quality):
+    \"\"\"Create an Aged Brie item.\"\"\"
+    context.items = [Item(AGED_BRIE, sell_in, quality)]  # ✅ Use constant
+    context.gilded_rose = GildedRose(context.items)
+
+@then('the quality should be at maximum')
+def step_quality_at_max(context):
+    \"\"\"Verify quality is at maximum allowed value.\"\"\"
+    actual = context.items[0].quality
+    assert actual == MAX_QUALITY, \
+        f\"Quality should be capped at {MAX_QUALITY}, got {actual}\"  # ✅ Use constant
+
+@given('a Sulfuras with sellIn {sell_in:d}')
+def step_sulfuras(context, sell_in):
+    \"\"\"Create a Sulfuras item (always quality 80).\"\"\"
+    context.items = [Item(SULFURAS, sell_in, SULFURAS_QUALITY)]  # ✅ Use constants
+    context.gilded_rose = GildedRose(context.items)
+```
+
+### MANDATORY: Complete Assertions
+
+**Every step validation MUST check ALL affected properties:**
+
+```python
+# ❌ WRONG - Incomplete assertion
+@then('the quality should be {expected:d}')
+def step_check_quality(context, expected):
+    assert context.items[0].quality == expected
+
+# ✅ CORRECT - Validates quality + sellIn + name
+@then('the quality should be {quality:d} and sellIn should be {sell_in:d}')
+def step_check_complete_state(context, quality, sell_in):
+    \"\"\"Verify both quality and sellIn values.\"\"\"
+    item = context.items[0]
+    assert item.quality == quality, \
+        f\"Quality: expected {quality}, got {item.quality}\"
+    assert item.sell_in == sell_in, \
+        f\"SellIn: expected {sell_in}, got {item.sell_in}\"
+
+@then('the item name should not change')
+def step_name_unchanged(context):
+    \"\"\"Verify item name remains constant.\"\"\"
+    original_name = context.original_name
+    current_name = context.items[0].name
+    assert current_name == original_name, \
+        f\"Name changed from '{original_name}' to '{current_name}'\"
+```
+
+### Modern Python 3 Style
 
 When creating Python step definitions, follow these modern practices:
 

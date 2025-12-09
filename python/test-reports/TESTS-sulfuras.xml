@@ -1,0 +1,152 @@
+<testsuite name="sulfuras.Sulfuras Legendary Item Properties" tests="10" errors="0" failures="0" skipped="0" time="0.008625" timestamp="2025-12-08T23:14:20.177164" hostname="2445ANACANDIDO.local"><testcase classname="sulfuras.Sulfuras Legendary Item Properties" name="Sulfuras quality never changes" status="passed" time="0.000609"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @smoke @immutable
+  Scenario: Sulfuras quality never changes
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Sulfuras with sellIn 10 and quality 80 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 80 ... passed in 0.000s
+    And the sellIn should be 10 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="sulfuras.Sulfuras Legendary Item Properties" name="Sulfuras sellIn never decreases" status="passed" time="0.000754"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @immutable
+  Scenario: Sulfuras sellIn never decreases
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Sulfuras with sellIn 5 and quality 80 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 80 ... passed in 0.000s
+    And the sellIn should be 5 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="sulfuras.Sulfuras Legendary Item Properties" name="Sulfuras maintains properties with negative sellIn" status="passed" time="0.000593"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @edge_case @immutable
+  Scenario: Sulfuras maintains properties with negative sellIn
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Sulfuras with sellIn -1 and quality 80 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 80 ... passed in 0.000s
+    And the sellIn should be -1 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="sulfuras.Sulfuras Legendary Item Properties" name="Sulfuras on sell date maintains all properties" status="passed" time="0.00051"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @edge_case @transition
+  Scenario: Sulfuras on sell date maintains all properties
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Sulfuras with sellIn 0 and quality 80 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 80 ... passed in 0.000s
+    And the sellIn should be 0 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="sulfuras.Sulfuras Legendary Item Properties" name="Sulfuras never changes over time -- @1.1 " status="passed" time="0.000649"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression @immutable
+  Scenario Outline: Sulfuras never changes over time -- @1.1 
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Sulfuras with sellIn 10 and quality 80 ... passed in 0.000s
+    When 1 days pass ... passed in 0.000s
+    Then the quality should be 80 ... passed in 0.000s
+    And the sellIn should be 10 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="sulfuras.Sulfuras Legendary Item Properties" name="Sulfuras never changes over time -- @1.2 " status="passed" time="0.001109"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression @immutable
+  Scenario Outline: Sulfuras never changes over time -- @1.2 
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Sulfuras with sellIn 5 and quality 80 ... passed in 0.001s
+    When 5 days pass ... passed in 0.000s
+    Then the quality should be 80 ... passed in 0.000s
+    And the sellIn should be 5 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="sulfuras.Sulfuras Legendary Item Properties" name="Sulfuras never changes over time -- @1.3 " status="passed" time="0.000655"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression @immutable
+  Scenario Outline: Sulfuras never changes over time -- @1.3 
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Sulfuras with sellIn 0 and quality 80 ... passed in 0.000s
+    When 10 days pass ... passed in 0.000s
+    Then the quality should be 80 ... passed in 0.000s
+    And the sellIn should be 0 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="sulfuras.Sulfuras Legendary Item Properties" name="Sulfuras never changes over time -- @1.4 " status="passed" time="0.000643"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression @immutable
+  Scenario Outline: Sulfuras never changes over time -- @1.4 
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Sulfuras with sellIn -1 and quality 80 ... passed in 0.000s
+    When 100 days pass ... passed in 0.000s
+    Then the quality should be 80 ... passed in 0.000s
+    And the sellIn should be -1 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="sulfuras.Sulfuras Legendary Item Properties" name="Sulfuras never changes over time -- @1.5 " status="passed" time="0.001663"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression @immutable
+  Scenario Outline: Sulfuras never changes over time -- @1.5 
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Sulfuras with sellIn -100 and quality 80 ... passed in 0.000s
+    When 1000 days pass ... passed in 0.001s
+    Then the quality should be 80 ... passed in 0.000s
+    And the sellIn should be -100 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="sulfuras.Sulfuras Legendary Item Properties" name="Sulfuras is always quality 80" status="passed" time="0.001438"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @business_rule
+  Scenario: Sulfuras is always quality 80
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Sulfuras with sellIn 0 and quality 80 ... passed in 0.001s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 80 ... passed in 0.000s
+    And the sellIn should be 0 ... passed in 0.000s
+    And Sulfuras maintains legendary status ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>

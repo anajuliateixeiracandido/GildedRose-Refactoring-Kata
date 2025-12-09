@@ -1,0 +1,784 @@
+@aged_brie @special_item
+Feature: Aged Brie Quality Improvement # features/aged_brie.feature:2
+  As an inventory manager
+  I want Aged Brie to increase in quality as it ages
+  So that I can price aged cheese appropriately
+  @aged_brie @special_item
+  Feature: Aged Brie Quality Improvement  # features/aged_brie.feature:2
+
+  @smoke
+  Scenario: Aged Brie quality increases by 1 before sell date  # features/aged_brie.feature:11
+    Given the Gilded Rose inventory system                     # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 10 and quality 20           # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                            # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 21                              # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 9                                 # features/steps/gilded_rose_steps.py:211
+
+  @transition
+  Scenario: Aged Brie quality increases by 2 on sell date  # features/aged_brie.feature:18
+    Given the Gilded Rose inventory system                 # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 0 and quality 20        # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                        # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 22                          # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -1                            # features/steps/gilded_rose_steps.py:211
+
+  Scenario: Aged Brie quality increases by 2 after sell date  # features/aged_brie.feature:24
+    Given the Gilded Rose inventory system                    # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn -1 and quality 20          # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                           # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 22                             # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -2                               # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_ceiling
+  Scenario: Aged Brie quality never exceeds 50      # features/aged_brie.feature:31
+    Given the Gilded Rose inventory system          # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 5 and quality 50 # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                 # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                   # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 4                      # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_ceiling
+  Scenario: Aged Brie at quality 49 increases to 50 (not beyond)  # features/aged_brie.feature:38
+    Given the Gilded Rose inventory system                        # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 5 and quality 49               # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                               # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                                 # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 4                                    # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_ceiling
+  Scenario: Aged Brie at quality 49 after sell date caps at 50  # features/aged_brie.feature:45
+    Given the Gilded Rose inventory system                      # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn -1 and quality 49            # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                             # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                               # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -2                                 # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_ceiling
+  Scenario: Aged Brie at quality 48 after sell date caps at 50  # features/aged_brie.feature:52
+    Given the Gilded Rose inventory system                      # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn -1 and quality 48            # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                             # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                               # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -2                                 # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_floor
+  Scenario: Aged Brie starting at quality 0 increases normally  # features/aged_brie.feature:59
+    Given the Gilded Rose inventory system                      # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 5 and quality 0              # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                             # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 1                                # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 4                                  # features/steps/gilded_rose_steps.py:211
+
+  @regression
+  Scenario: Aged Brie with very negative sellIn improves by 2  # features/aged_brie.feature:66
+    Given the Gilded Rose inventory system                     # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn -10 and quality 20          # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                            # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 22                              # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -11                               # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Aged Brie quality improvement over time -- @1.1   # features/aged_brie.feature:81
+    Given the Gilded Rose inventory system                            # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 10 and quality 0                   # features/steps/gilded_rose_steps.py:35
+    When 1 days pass                                                  # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 1                                      # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 9                                        # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Aged Brie quality improvement over time -- @1.2   # features/aged_brie.feature:82
+    Given the Gilded Rose inventory system                            # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 10 and quality 20                  # features/steps/gilded_rose_steps.py:35
+    When 5 days pass                                                  # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 25                                     # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 5                                        # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Aged Brie quality improvement over time -- @1.3   # features/aged_brie.feature:83
+    Given the Gilded Rose inventory system                            # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 5 and quality 40                   # features/steps/gilded_rose_steps.py:35
+    When 5 days pass                                                  # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 45                                     # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 0                                        # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Aged Brie quality improvement over time -- @1.4   # features/aged_brie.feature:84
+    Given the Gilded Rose inventory system                            # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 2 and quality 45                   # features/steps/gilded_rose_steps.py:35
+    When 3 days pass                                                  # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 49                                     # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -1                                       # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Aged Brie quality improvement over time -- @1.5   # features/aged_brie.feature:85
+    Given the Gilded Rose inventory system                            # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 0 and quality 48                   # features/steps/gilded_rose_steps.py:35
+    When 1 days pass                                                  # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 50                                     # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -1                                       # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Aged Brie quality improvement over time -- @1.6   # features/aged_brie.feature:86
+    Given the Gilded Rose inventory system                            # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn -5 and quality 30                  # features/steps/gilded_rose_steps.py:35
+    When 5 days pass                                                  # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 40                                     # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -10                                      # features/steps/gilded_rose_steps.py:211
+
+@backstage @special_item @concert
+Feature: Backstage Pass Concert Ticket Dynamics # features/backstage_passes.feature:2
+  As an inventory manager
+  I want backstage pass quality to increase as the concert approaches
+  So that ticket prices reflect proximity to the event
+  @backstage @special_item @concert
+  Feature: Backstage Pass Concert Ticket Dynamics  # features/backstage_passes.feature:2
+
+  @smoke @far_from_concert
+  Scenario: Backstage pass increases by 1 when concert is far (>10 days)  # features/backstage_passes.feature:11
+    Given the Gilded Rose inventory system                                # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 15 and quality 20                  # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 21                                         # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 14                                           # features/steps/gilded_rose_steps.py:211
+
+  @threshold @critical
+  Scenario: Backstage pass crossing 11→10 threshold gets +1 (not +2 yet)  # features/backstage_passes.feature:18
+    Given the Gilded Rose inventory system                                # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 11 and quality 20                  # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 21                                         # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 10                                           # features/steps/gilded_rose_steps.py:211
+
+  @moderate_urgency
+  Scenario: Backstage pass increases by 2 when 10 days or less  # features/backstage_passes.feature:25
+    Given the Gilded Rose inventory system                      # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 10 and quality 20        # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                             # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 22                               # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 9                                  # features/steps/gilded_rose_steps.py:211
+
+  @threshold @critical
+  Scenario: Backstage pass crossing 6→5 threshold gets +2 (not +3 yet)  # features/backstage_passes.feature:32
+    Given the Gilded Rose inventory system                              # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 6 and quality 20                 # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                     # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 22                                       # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 5                                          # features/steps/gilded_rose_steps.py:211
+
+  @high_urgency
+  Scenario: Backstage pass increases by 3 when 5 days or less  # features/backstage_passes.feature:39
+    Given the Gilded Rose inventory system                     # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 5 and quality 20        # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                            # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 23                              # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 4                                 # features/steps/gilded_rose_steps.py:211
+
+  @critical @concert_day
+  Scenario: Backstage pass on concert day (sellIn=0) drops to 0 after update  # features/backstage_passes.feature:46
+    Given the Gilded Rose inventory system                                    # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 0 and quality 20                       # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                           # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                                              # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -1                                               # features/steps/gilded_rose_steps.py:211
+
+  @expired @worthless
+  Scenario: Backstage pass after concert has quality 0   # features/backstage_passes.feature:53
+    Given the Gilded Rose inventory system               # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn -1 and quality 20 # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                      # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                         # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -2                          # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_ceiling
+  Scenario: Backstage pass quality 48 with +3 increment caps at 50  # features/backstage_passes.feature:60
+    Given the Gilded Rose inventory system                          # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 5 and quality 48             # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                 # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                                   # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 4                                      # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_ceiling
+  Scenario: Backstage pass quality 49 with +2 increment caps at 50  # features/backstage_passes.feature:67
+    Given the Gilded Rose inventory system                          # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 10 and quality 49            # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                 # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                                   # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 9                                      # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_ceiling
+  Scenario: Backstage pass quality 47 with +3 increment caps at 50  # features/backstage_passes.feature:74
+    Given the Gilded Rose inventory system                          # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 5 and quality 47             # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                 # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                                   # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 4                                      # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_floor
+  Scenario: Backstage pass starting at quality 0 increases by 3  # features/backstage_passes.feature:81
+    Given the Gilded Rose inventory system                       # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 5 and quality 0           # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                              # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 3                                 # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 4                                   # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_ceiling
+  Scenario: Backstage pass at max quality doesn't exceed 50  # features/backstage_passes.feature:88
+    Given the Gilded Rose inventory system                   # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 5 and quality 50      # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                          # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                            # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 4                               # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @last_minute
+  Scenario: Backstage pass 1 day before concert increases by 3  # features/backstage_passes.feature:95
+    Given the Gilded Rose inventory system                      # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 1 and quality 20         # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                             # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 23                               # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 0                                  # features/steps/gilded_rose_steps.py:211
+
+  @time_progression @full_journey
+  Scenario: Backstage pass quality progression from 15 days to concert  # features/backstage_passes.feature:102
+    Given the Gilded Rose inventory system                              # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 15 and quality 20                # features/steps/gilded_rose_steps.py:49
+    When 5 days pass                                                    # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 25                                       # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 10                                         # features/steps/gilded_rose_steps.py:211
+    When 5 days pass                                                    # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 35                                       # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 5                                          # features/steps/gilded_rose_steps.py:211
+    When 5 days pass                                                    # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 50                                       # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 0                                          # features/steps/gilded_rose_steps.py:211
+    When 1 day passes                                                   # features/steps/gilded_rose_steps.py:187
+    Then the quality should be 0                                        # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -1                                         # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @1.1 Far from concert (>10 days)  # features/backstage_passes.feature:126
+    Given the Gilded Rose inventory system                                                                # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 15 and quality 20                                                  # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 21                                                                         # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 14                                                                           # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @1.2 Far from concert (>10 days)  # features/backstage_passes.feature:127
+    Given the Gilded Rose inventory system                                                                # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 12 and quality 30                                                  # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 31                                                                         # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 11                                                                           # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @1.3 Far from concert (>10 days)  # features/backstage_passes.feature:128
+    Given the Gilded Rose inventory system                                                                # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 11 and quality 40                                                  # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 41                                                                         # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 10                                                                           # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @2.1 10 days or less (6-10 days)  # features/backstage_passes.feature:132
+    Given the Gilded Rose inventory system                                                                # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 10 and quality 20                                                  # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 22                                                                         # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 9                                                                            # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @2.2 10 days or less (6-10 days)  # features/backstage_passes.feature:133
+    Given the Gilded Rose inventory system                                                                # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 8 and quality 25                                                   # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 27                                                                         # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 7                                                                            # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @2.3 10 days or less (6-10 days)  # features/backstage_passes.feature:134
+    Given the Gilded Rose inventory system                                                                # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 6 and quality 35                                                   # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 37                                                                         # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 5                                                                            # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @3.1 5 days or less (1-5 days)  # features/backstage_passes.feature:138
+    Given the Gilded Rose inventory system                                                              # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 5 and quality 20                                                 # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                     # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 23                                                                       # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 4                                                                          # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @3.2 5 days or less (1-5 days)  # features/backstage_passes.feature:139
+    Given the Gilded Rose inventory system                                                              # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 3 and quality 30                                                 # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                     # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 33                                                                       # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 2                                                                          # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @3.3 5 days or less (1-5 days)  # features/backstage_passes.feature:140
+    Given the Gilded Rose inventory system                                                              # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 1 and quality 40                                                 # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                     # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 43                                                                       # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 0                                                                          # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @4.1 Concert day and after  # features/backstage_passes.feature:144
+    Given the Gilded Rose inventory system                                                          # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 0 and quality 45                                             # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                 # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                                                                    # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -1                                                                     # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @4.2 Concert day and after  # features/backstage_passes.feature:145
+    Given the Gilded Rose inventory system                                                          # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn -1 and quality 40                                            # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                 # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                                                                    # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -2                                                                     # features/steps/gilded_rose_steps.py:211
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @4.3 Concert day and after  # features/backstage_passes.feature:146
+    Given the Gilded Rose inventory system                                                          # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn -5 and quality 30                                            # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                 # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                                                                    # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -6                                                                     # features/steps/gilded_rose_steps.py:211
+
+@integration @multiple_items
+Feature: Multiple Items Update Independently # features/multiple_items.feature:2
+  As an inventory manager
+  I want to update multiple items in one operation
+  So that the daily inventory update is efficient
+  @integration @multiple_items
+  Feature: Multiple Items Update Independently  # features/multiple_items.feature:2
+
+  @smoke @integration
+  Scenario: Multiple items of different types update independently  # features/multiple_items.feature:11
+    Given the Gilded Rose inventory system                          # features/steps/gilded_rose_steps.py:21
+    Given multiple items of different types                         # features/steps/gilded_rose_steps.py:65
+    When the system updates quality                                 # features/steps/gilded_rose_steps.py:168
+    Then each item should update according to its own rules         # features/steps/gilded_rose_steps.py:224
+
+  @integration @all_types
+  Scenario: All item types in one inventory update correctly  # features/multiple_items.feature:17
+    Given the Gilded Rose inventory system                    # features/steps/gilded_rose_steps.py:21
+    Given the following items in inventory:                   # features/steps/gilded_rose_steps.py:125
+      | name                                      | sellIn | quality |
+      | Normal Item                               | 5      | 10      |
+      | Aged Brie                                 | 5      | 10      |
+      | Sulfuras, Hand of Ragnaros                | 5      | 80      |
+      | Backstage passes to a TAFKAL80ETC concert | 5      | 10      |
+    When the system updates quality                           # features/steps/gilded_rose_steps.py:168
+    Then the items should have the following properties:      # features/steps/gilded_rose_steps.py:137
+      | name                                      | sellIn | quality |
+      | Normal Item                               | 4      | 9       |
+      | Aged Brie                                 | 4      | 11      |
+      | Sulfuras, Hand of Ragnaros                | 5      | 80      |
+      | Backstage passes to a TAFKAL80ETC concert | 4      | 13      |
+
+  @edge_case @empty_inventory
+  Scenario: Empty inventory doesn't crash the system  # features/multiple_items.feature:33
+    Given the Gilded Rose inventory system            # features/steps/gilded_rose_steps.py:21
+    Given an empty inventory                          # features/steps/gilded_rose_steps.py:100
+    When the system updates quality                   # features/steps/gilded_rose_steps.py:168
+    Then no errors should occur                       # features/steps/gilded_rose_steps.py:242
+
+  @integration @large_inventory
+  Scenario: Large inventory updates efficiently   # features/multiple_items.feature:39
+    Given the Gilded Rose inventory system        # features/steps/gilded_rose_steps.py:21
+    Given 100 items of various types in inventory # features/steps/gilded_rose_steps.py:107
+    When the system updates quality               # features/steps/gilded_rose_steps.py:168
+    Then all items should be updated              # features/steps/gilded_rose_steps.py:249
+    And the operation should complete quickly     # features/steps/gilded_rose_steps.py:258
+
+  @integration @mixed_states
+  Scenario: Items at different lifecycle stages update correctly  # features/multiple_items.feature:46
+    Given the Gilded Rose inventory system                        # features/steps/gilded_rose_steps.py:21
+    Given the following items in inventory:                       # features/steps/gilded_rose_steps.py:125
+      | name                                      | sellIn | quality | description        |
+      | Normal Item                               | 10     | 20      | Well before sell   |
+      | Normal Item                               | 0      | 15      | On sell date       |
+      | Normal Item                               | -5     | 10      | Well past sell     |
+      | Aged Brie                                 | 10     | 30      | Before sell        |
+      | Aged Brie                                 | -5     | 40      | Past sell          |
+      | Backstage passes to a TAFKAL80ETC concert | 15     | 20      | Far from concert   |
+      | Backstage passes to a TAFKAL80ETC concert | 10     | 25      | 10 days to concert |
+      | Backstage passes to a TAFKAL80ETC concert | 5      | 30      | 5 days to concert  |
+      | Backstage passes to a TAFKAL80ETC concert | 0      | 35      | Concert day        |
+      | Backstage passes to a TAFKAL80ETC concert | -1     | 40      | After concert      |
+      | Sulfuras, Hand of Ragnaros                | 0      | 80      | Legendary          |
+    When the system updates quality                               # features/steps/gilded_rose_steps.py:168
+    Then each item should update according to its state and type  # features/steps/gilded_rose_steps.py:266
+
+  @regression @order_independence
+  Scenario: Item update order doesn't affect results                 # features/multiple_items.feature:64
+    Given the Gilded Rose inventory system                           # features/steps/gilded_rose_steps.py:21
+    Given the following items in inventory:                          # features/steps/gilded_rose_steps.py:125
+      | name   | sellIn | quality |
+      | Item A | 5      | 10      |
+      | Item B | 3      | 8       |
+      | Item C | 7      | 15      |
+    When the system updates quality                                  # features/steps/gilded_rose_steps.py:168
+    Then the update order should not affect the final quality values # features/steps/gilded_rose_steps.py:275
+
+@normal @unit
+Feature: Normal Item Quality Degradation # features/normal_items.feature:2
+  As an inventory manager
+  I want normal items to degrade in quality over time
+  So that I can track item freshness and value
+  @normal @unit
+  Feature: Normal Item Quality Degradation  # features/normal_items.feature:2
+
+  @smoke
+  Scenario: Normal item quality decreases by 1 before sell date  # features/normal_items.feature:11
+    Given the Gilded Rose inventory system                       # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn 5 and quality 10             # features/steps/gilded_rose_steps.py:28
+    When the system updates quality                              # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 9                                 # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 4                                   # features/steps/gilded_rose_steps.py:211
+
+  @transition
+  Scenario: Normal item quality decreases by 2 on sell date (transition day)  # features/normal_items.feature:18
+    Given the Gilded Rose inventory system                                    # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn 0 and quality 10                          # features/steps/gilded_rose_steps.py:28
+    When the system updates quality                                           # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 8                                              # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -1                                               # features/steps/gilded_rose_steps.py:211
+
+  Scenario: Normal item quality decreases by 2 after sell date  # features/normal_items.feature:24
+    Given the Gilded Rose inventory system                      # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn -1 and quality 10           # features/steps/gilded_rose_steps.py:28
+    When the system updates quality                             # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 8                                # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -2                                 # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_floor
+  Scenario: Normal item quality never goes negative  # features/normal_items.feature:31
+    Given the Gilded Rose inventory system           # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn 5 and quality 0  # features/steps/gilded_rose_steps.py:28
+    When the system updates quality                  # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                     # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 4                       # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_floor
+  Scenario: Normal item with quality 1 after sell date goes to 0  # features/normal_items.feature:38
+    Given the Gilded Rose inventory system                        # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn -1 and quality 1              # features/steps/gilded_rose_steps.py:28
+    When the system updates quality                               # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                                  # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -2                                   # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @quality_floor
+  Scenario: Normal item with quality 2 after sell date goes to 0  # features/normal_items.feature:45
+    Given the Gilded Rose inventory system                        # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn -1 and quality 2              # features/steps/gilded_rose_steps.py:28
+    When the system updates quality                               # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                                  # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -2                                   # features/steps/gilded_rose_steps.py:211
+
+  @regression
+  Scenario: Normal item with very negative sellIn still degrades by 2  # features/normal_items.feature:52
+    Given the Gilded Rose inventory system                             # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn -10 and quality 10                 # features/steps/gilded_rose_steps.py:28
+    When the system updates quality                                    # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 8                                       # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -11                                       # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.1   # features/normal_items.feature:67
+    Given the Gilded Rose inventory system                              # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn 10 and quality 20                   # features/steps/gilded_rose_steps.py:28
+    When 1 days pass                                                    # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 19                                       # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 9                                          # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.2   # features/normal_items.feature:68
+    Given the Gilded Rose inventory system                              # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn 10 and quality 20                   # features/steps/gilded_rose_steps.py:28
+    When 5 days pass                                                    # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 15                                       # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 5                                          # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.3   # features/normal_items.feature:69
+    Given the Gilded Rose inventory system                              # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn 5 and quality 10                    # features/steps/gilded_rose_steps.py:28
+    When 5 days pass                                                    # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 5                                        # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 0                                          # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.4   # features/normal_items.feature:70
+    Given the Gilded Rose inventory system                              # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn 2 and quality 10                    # features/steps/gilded_rose_steps.py:28
+    When 3 days pass                                                    # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 6                                        # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -1                                         # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.5   # features/normal_items.feature:71
+    Given the Gilded Rose inventory system                              # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn 0 and quality 10                    # features/steps/gilded_rose_steps.py:28
+    When 1 days pass                                                    # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 8                                        # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -1                                         # features/steps/gilded_rose_steps.py:211
+
+  @time_progression
+  Scenario Outline: Normal item quality degradation over time -- @1.6   # features/normal_items.feature:72
+    Given the Gilded Rose inventory system                              # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn -1 and quality 10                   # features/steps/gilded_rose_steps.py:28
+    When 1 days pass                                                    # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 8                                        # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -2                                         # features/steps/gilded_rose_steps.py:211
+
+@boundaries @quality_limits
+Feature: Quality Boundary Enforcement # features/quality_boundaries.feature:2
+  As an inventory manager
+  I want quality to never be negative or exceed 50 (except Sulfuras)
+  So that quality values remain within valid business ranges
+  @boundaries @quality_limits
+  Feature: Quality Boundary Enforcement  # features/quality_boundaries.feature:2
+
+  @quality_floor @normal
+  Scenario: Normal item quality cannot go below 0   # features/quality_boundaries.feature:11
+    Given the Gilded Rose inventory system          # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn 5 and quality 0 # features/steps/gilded_rose_steps.py:28
+    When the system updates quality                 # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                    # features/steps/gilded_rose_steps.py:198
+
+  @quality_floor @aged_brie
+  Scenario: Aged Brie can start at quality 0       # features/quality_boundaries.feature:17
+    Given the Gilded Rose inventory system         # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 5 and quality 0 # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 1                   # features/steps/gilded_rose_steps.py:198
+
+  @quality_ceiling @aged_brie
+  Scenario: Aged Brie quality cannot exceed 50      # features/quality_boundaries.feature:23
+    Given the Gilded Rose inventory system          # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 5 and quality 50 # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                 # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                   # features/steps/gilded_rose_steps.py:198
+
+  @quality_ceiling @backstage
+  Scenario: Backstage pass quality cannot exceed 50     # features/quality_boundaries.feature:29
+    Given the Gilded Rose inventory system              # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 5 and quality 50 # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                     # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                       # features/steps/gilded_rose_steps.py:198
+
+  @quality_exception @legendary
+  Scenario: Sulfuras quality is always 80 (exception to 50 limit)  # features/quality_boundaries.feature:35
+    Given the Gilded Rose inventory system                         # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn 0 and quality 80                  # features/steps/gilded_rose_steps.py:42
+    When the system updates quality                                # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 80                                  # features/steps/gilded_rose_steps.py:198
+
+  @quality_floor @backstage @expired
+  Scenario: Backstage pass after concert drops to 0      # features/quality_boundaries.feature:41
+    Given the Gilded Rose inventory system               # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn -1 and quality 45 # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                      # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                         # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @1.1 Quality floor (minimum 0)  # features/quality_boundaries.feature:54
+    Given the Gilded Rose inventory system                                                                # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn 5 and quality 0                                                       # features/steps/gilded_rose_steps.py:28
+    When the system updates quality                                                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                                                                          # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @1.2 Quality floor (minimum 0)  # features/quality_boundaries.feature:55
+    Given the Gilded Rose inventory system                                                                # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn -1 and quality 1                                                      # features/steps/gilded_rose_steps.py:28
+    When the system updates quality                                                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                                                                          # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @1.3 Quality floor (minimum 0)  # features/quality_boundaries.feature:56
+    Given the Gilded Rose inventory system                                                                # features/steps/gilded_rose_steps.py:21
+    Given a normal item with sellIn -1 and quality 2                                                      # features/steps/gilded_rose_steps.py:28
+    When the system updates quality                                                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 0                                                                          # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @1.4 Quality floor (minimum 0)  # features/quality_boundaries.feature:57
+    Given the Gilded Rose inventory system                                                                # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 5 and quality 0                                                        # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                                                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 1                                                                          # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @1.5 Quality floor (minimum 0)  # features/quality_boundaries.feature:58
+    Given the Gilded Rose inventory system                                                                # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 5 and quality 0                                                    # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                       # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 3                                                                          # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @2.1 Quality ceiling (maximum 50, except Sulfuras)  # features/quality_boundaries.feature:62
+    Given the Gilded Rose inventory system                                                                                    # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 5 and quality 50                                                                           # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                                                                                           # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                                                                                             # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @2.2 Quality ceiling (maximum 50, except Sulfuras)  # features/quality_boundaries.feature:63
+    Given the Gilded Rose inventory system                                                                                    # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn 5 and quality 49                                                                           # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                                                                                           # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                                                                                             # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @2.3 Quality ceiling (maximum 50, except Sulfuras)  # features/quality_boundaries.feature:64
+    Given the Gilded Rose inventory system                                                                                    # features/steps/gilded_rose_steps.py:21
+    Given an Aged Brie with sellIn -1 and quality 48                                                                          # features/steps/gilded_rose_steps.py:35
+    When the system updates quality                                                                                           # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                                                                                             # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @2.4 Quality ceiling (maximum 50, except Sulfuras)  # features/quality_boundaries.feature:65
+    Given the Gilded Rose inventory system                                                                                    # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 5 and quality 50                                                                       # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                                           # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                                                                                             # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @2.5 Quality ceiling (maximum 50, except Sulfuras)  # features/quality_boundaries.feature:66
+    Given the Gilded Rose inventory system                                                                                    # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 5 and quality 49                                                                       # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                                           # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                                                                                             # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @2.6 Quality ceiling (maximum 50, except Sulfuras)  # features/quality_boundaries.feature:67
+    Given the Gilded Rose inventory system                                                                                    # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 5 and quality 48                                                                       # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                                           # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                                                                                             # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @2.7 Quality ceiling (maximum 50, except Sulfuras)  # features/quality_boundaries.feature:68
+    Given the Gilded Rose inventory system                                                                                    # features/steps/gilded_rose_steps.py:21
+    Given a Backstage pass with sellIn 10 and quality 49                                                                      # features/steps/gilded_rose_steps.py:49
+    When the system updates quality                                                                                           # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 50                                                                                             # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @3.1 Sulfuras exception (always 80)  # features/quality_boundaries.feature:72
+    Given the Gilded Rose inventory system                                                                     # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn 10 and quality 80                                                             # features/steps/gilded_rose_steps.py:42
+    When the system updates quality                                                                            # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 80                                                                              # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @3.2 Sulfuras exception (always 80)  # features/quality_boundaries.feature:73
+    Given the Gilded Rose inventory system                                                                     # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn 0 and quality 80                                                              # features/steps/gilded_rose_steps.py:42
+    When the system updates quality                                                                            # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 80                                                                              # features/steps/gilded_rose_steps.py:198
+
+  @scenario_outline @quality_limits
+  Scenario Outline: Quality boundaries are enforced for all item types -- @3.3 Sulfuras exception (always 80)  # features/quality_boundaries.feature:74
+    Given the Gilded Rose inventory system                                                                     # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn -10 and quality 80                                                            # features/steps/gilded_rose_steps.py:42
+    When the system updates quality                                                                            # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 80                                                                              # features/steps/gilded_rose_steps.py:198
+
+@sulfuras @legendary @special_item
+Feature: Sulfuras Legendary Item Properties # features/sulfuras.feature:2
+  As an inventory manager
+  I want Sulfuras to never degrade or change
+  So that legendary items maintain their eternal value
+  @sulfuras @legendary @special_item
+  Feature: Sulfuras Legendary Item Properties  # features/sulfuras.feature:2
+
+  @smoke @immutable
+  Scenario: Sulfuras quality never changes         # features/sulfuras.feature:11
+    Given the Gilded Rose inventory system         # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn 10 and quality 80 # features/steps/gilded_rose_steps.py:42
+    When the system updates quality                # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 80                  # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 10                    # features/steps/gilded_rose_steps.py:211
+
+  @immutable
+  Scenario: Sulfuras sellIn never decreases       # features/sulfuras.feature:18
+    Given the Gilded Rose inventory system        # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn 5 and quality 80 # features/steps/gilded_rose_steps.py:42
+    When the system updates quality               # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 80                 # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 5                    # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @immutable
+  Scenario: Sulfuras maintains properties with negative sellIn  # features/sulfuras.feature:25
+    Given the Gilded Rose inventory system                      # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn -1 and quality 80              # features/steps/gilded_rose_steps.py:42
+    When the system updates quality                             # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 80                               # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -1                                 # features/steps/gilded_rose_steps.py:211
+
+  @edge_case @transition
+  Scenario: Sulfuras on sell date maintains all properties  # features/sulfuras.feature:32
+    Given the Gilded Rose inventory system                  # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn 0 and quality 80           # features/steps/gilded_rose_steps.py:42
+    When the system updates quality                         # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 80                           # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 0                              # features/steps/gilded_rose_steps.py:211
+
+  @time_progression @immutable
+  Scenario Outline: Sulfuras never changes over time -- @1.1   # features/sulfuras.feature:47
+    Given the Gilded Rose inventory system                     # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn 10 and quality 80             # features/steps/gilded_rose_steps.py:42
+    When 1 days pass                                           # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 80                              # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 10                                # features/steps/gilded_rose_steps.py:211
+
+  @time_progression @immutable
+  Scenario Outline: Sulfuras never changes over time -- @1.2   # features/sulfuras.feature:48
+    Given the Gilded Rose inventory system                     # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn 5 and quality 80              # features/steps/gilded_rose_steps.py:42
+    When 5 days pass                                           # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 80                              # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 5                                 # features/steps/gilded_rose_steps.py:211
+
+  @time_progression @immutable
+  Scenario Outline: Sulfuras never changes over time -- @1.3   # features/sulfuras.feature:49
+    Given the Gilded Rose inventory system                     # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn 0 and quality 80              # features/steps/gilded_rose_steps.py:42
+    When 10 days pass                                          # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 80                              # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 0                                 # features/steps/gilded_rose_steps.py:211
+
+  @time_progression @immutable
+  Scenario Outline: Sulfuras never changes over time -- @1.4   # features/sulfuras.feature:50
+    Given the Gilded Rose inventory system                     # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn -1 and quality 80             # features/steps/gilded_rose_steps.py:42
+    When 100 days pass                                         # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 80                              # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -1                                # features/steps/gilded_rose_steps.py:211
+
+  @time_progression @immutable
+  Scenario Outline: Sulfuras never changes over time -- @1.5   # features/sulfuras.feature:51
+    Given the Gilded Rose inventory system                     # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn -100 and quality 80           # features/steps/gilded_rose_steps.py:42
+    When 1000 days pass                                        # features/steps/gilded_rose_steps.py:177
+    Then the quality should be 80                              # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be -100                              # features/steps/gilded_rose_steps.py:211
+
+  @business_rule
+  Scenario: Sulfuras is always quality 80         # features/sulfuras.feature:54
+    Given the Gilded Rose inventory system        # features/steps/gilded_rose_steps.py:21
+    Given a Sulfuras with sellIn 0 and quality 80 # features/steps/gilded_rose_steps.py:42
+    When the system updates quality               # features/steps/gilded_rose_steps.py:168
+    Then the quality should be 80                 # features/steps/gilded_rose_steps.py:198
+    And the sellIn should be 0                    # features/steps/gilded_rose_steps.py:211
+    And Sulfuras maintains legendary status       # features/steps/gilded_rose_steps.py:283
+
