@@ -38,7 +38,7 @@
     <li>module - <code><module 'gilded_rose' from 'C:\\Users\\Thiago Andrade\\Documents\\GitHub\\GildedRose-Refactoring-Kata\\python\\gilded_rose.py'></code></li>
     <li><span class="label label-success">killed</span> by <code>tests/test_gilded_rose.py::GildedRoseTest::test_aged_brie_after_sell_date</code></li>
     
-    <li>duration - 0.139 s</li>
+    <li>duration - 0.136 s</li>
     
     
     <li>tests run - 1</li>
@@ -56,7 +56,7 @@
 >       self.assertEqual(22, items[0].quality)
 E       AssertionError: 22 != 18
 
-tests\test_gilded_rose.py:93: AssertionError</pre>
+tests\test_gilded_rose.py:107: AssertionError</pre>
 
 <h3>Mutations</h3>
 <ul>
@@ -85,13 +85,13 @@ SULFURAS_QUALITY = 80
 
 class GildedRose:
     '''Manages quality updates for inventory items.
-
+    
     Uses the Strategy Pattern to apply item-specific update rules.
     '''
     
     def __init__(self, items):
         '''Initialize the Gilded Rose system with a list of items.
-
+        
         Args:
             items: List of Item objects to manage.
         '''
@@ -100,7 +100,7 @@ class GildedRose:
     
     def _build_update_strategies(self):
         '''Build strategy dictionary mapping item names to update methods.
-
+        
         Returns:
             Dictionary mapping item names to their update methods.
         '''
@@ -118,9 +118,9 @@ class GildedRose:
     
     def _update_normal_item(self, item):
         '''Update quality for normal items.
-
+        
         Normal items degrade by 1 before sell date, by 2 after.
-
+        
         Args:
             item: Item to update.
         '''
@@ -132,9 +132,9 @@ class GildedRose:
     
     def _update_aged_brie(self, item):
         '''Update quality for Aged Brie.
-
+        
         Aged Brie improves by 1 before sell date, by 2 after.
-
+        
         Args:
             item: Item to update.
         '''
@@ -146,13 +146,13 @@ class GildedRose:
     
     def _update_backstage_pass(self, item):
         '''Update quality for Backstage passes.
-
+        
         Quality increases by:
         - 1 when more than 10 days remain
         - 2 when 10 days or less remain
         - 3 when 5 days or less remain
         - Drops to 0 after concert (sell_in < 0)
-
+        
         Args:
             item: Item to update.
         '''
@@ -171,9 +171,9 @@ class GildedRose:
     
     def _update_sulfuras(self, item):
         '''Update quality for Sulfuras (legendary item).
-
+        
         Sulfuras never changes quality or sell_in.
-
+        
         Args:
             item: Item to update (no changes made).
         '''
@@ -181,7 +181,7 @@ class GildedRose:
     
     def _increase_quality(self, item):
         '''Increase item quality by 1, respecting maximum bound.
-
+        
         Args:
             item: Item whose quality to increase.
         '''
@@ -190,7 +190,7 @@ class GildedRose:
     
     def _decrease_quality(self, item):
         '''Decrease item quality by 1, respecting minimum bound.
-
+        
         Args:
             item: Item whose quality to decrease.
         '''
@@ -199,7 +199,7 @@ class GildedRose:
     
     def _decrease_sell_in(self, item):
         '''Decrease item sell_in by 1.
-
+        
         Args:
             item: Item whose sell_in to decrease.
         '''
@@ -207,10 +207,10 @@ class GildedRose:
     
     def _is_expired(self, item):
         '''Check if item has passed its sell date.
-
+        
         Args:
             item: Item to check.
-
+            
         Returns:
             True if item.sell_in < 0, False otherwise.
         '''
@@ -222,7 +222,7 @@ class Item:
     
     def __init__(self, name, sell_in, quality):
         '''Initialize an inventory item.
-
+        
         Args:
             name: Name of the item.
             sell_in: Days until sell date (negative means expired).
@@ -234,7 +234,7 @@ class Item:
     
     def __repr__(self):
         '''Return string representation of item.
-
+        
         Returns:
             String in format "name, sell_in, quality".
         '''
