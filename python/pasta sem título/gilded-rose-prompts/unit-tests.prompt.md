@@ -214,11 +214,293 @@ def get_test_item(item_type):
 - [ ] Pylint score ≥ 9.0/10
 - [ ] Flake8 reports zero warnings
 
+### 🚫 Test Smell Prevention Checklist (CRITICAL)
+- [ ] **ZERO code duplication** - ItemBuilder used in ALL tests
+- [ ] **ZERO magic numbers** - All values from constants.py
+- [ ] **ZERO hardcoded strings** - All item names from constants.py
+- [ ] **ZERO obscure tests** - Multi-day tests have clear calculations
+- [ ] **ZERO incomplete assertions** - All tests verify quality AND sell_in
+- [ ] **100% builder usage** - No direct Item() instantiation in tests
+- [ ] **All assertions have messages** - Explain expected vs actual
+
+---
+
+## 🚨 CRITICAL: TEST SMELL PREVENTION (MANDATORY)
+
+### ❌ PROHIBITED PATTERNS - DO NOT GENERATE THESE
+
+#### 1. Code Duplication - Setup Repetition
+```python
+# ❌ NEVER DO THIS - Repeated in every test
+def test_normal_item():
+    items = [Item("Normal Item", 5, 10)]  # Duplicated
+    gilded_rose = GildedRose(items)       # Duplicated
+    gilded_rose.update_quality()          # Duplicated
+    assert items[0].quality == 9
+
+def test_aged_brie():
+    items = [Item("Aged Brie", 5, 10)]   # Duplicated again!
+    gilded_rose = GildedRose(items)       # Duplicated again!
+    gilded_rose.update_quality()          # Duplicated again!
+    assert items[0].quality == 11
+```
+
+**WHY THIS IS CRITICAL**: 35 tests with duplicated setup = 140+ duplicated lines. Any constructor change requires editing 35+ files.
+
+#### 2. Magic Numbers Without Context
+```python
+# ❌ NEVER DO THIS
+assert item.quality == 50  # What is 50?
+assert item.quality == 80  # What is 80?
+assert item.sell_in == 0   # What is 0?
+
+# ✅ ALWAYS DO THIS
+MAX_QUALITY = 50
+SULFURAS_QUALITY = 80
+TRANSITION_DAY = 0
+
+assert item.quality == MAX_QUALITY, f"Quality should not exceed {MAX_QUALITY}"
+assert item.quality == SULFURAS_QUALITY, f"Sulfuras always at {SULFURAS_QUALITY}"
+assert item.sell_in == TRANSITION_DAY, "Today is the sell date"
+```
+
+#### 3. Hardcoded Item Names
+```python
+# ❌ NEVER DO THIS
+item = Item("Aged Brie", 5, 10)  # Typo risk, no reuse
+item = Item("Backstage passes to a TAFKAL80ETC concert", 5, 10)  # Unmaintainable
+
+# ✅ ALWAYS DO THIS - Define constants module
+# constants.py
+AGED_BRIE = "Aged Brie"
+BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert"
+SULFURAS = "Sulfuras, Hand of Ragnaros"
+NORMAL_ITEM = "Normal Item"
+
+MAX_QUALITY = 50
+SULFURAS_QUALITY = 80
+MIN_QUALITY = 0
+
+# In tests
+from constants import AGED_BRIE, MAX_QUALITY
+item = Item(AGED_BRIE, 5, 10)
+```
+
+#### 4. Obscure Multi-Day Tests
+```python
+# ❌ NEVER DO THIS
+for _ in range(5):
+    gilded_rose.update_quality()
+assert item.quality == 25  # How did we get 25?
+
+# ✅ ALWAYS DO THIS
+INITIAL_QUALITY = 20
+DAYS = 5
+QUALITY_INCREASE_PER_DAY = 1
+
+for day in range(1, DAYS + 1):
+    gilded_rose.update_quality()
+    expected = INITIAL_QUALITY + (day * QUALITY_INCREASE_PER_DAY)
+    # Optional: intermediate assertions for clarity
+
+expected_final = INITIAL_QUALITY + (DAYS * QUALITY_INCREASE_PER_DAY)
+assert item.quality == expected_final, \
+    f"After {DAYS} days at +{QUALITY_INCREASE_PER_DAY}/day: expected {expected_final}, got {item.quality}"
+```
+
+#### 5. Incomplete Assertions
+```python
+# ❌ NEVER DO THIS - Only validates quality
+assert item.quality == 9
+
+# ✅ ALWAYS DO THIS - Validate all affected properties
+assert item.quality == 9, f"Quality should decrease by 1, got {item.quality}"
+assert item.sell_in == 4, f"SellIn should decrease by 1, got {item.sell_in}"
+assert item.name == NORMAL_ITEM, "Item name should not change"
+```
+
+### ✅ MANDATORY PATTERNS - YOU MUST USE THESE
+
+#### REQUIRED #1: Test Data Builder (NON-NEGOTIABLE)
+
+**YOU MUST implement ItemBuilder before writing any tests.**
+
+```python
+# test_builders.py (CREATE THIS FIRST)
+from constants import NORMAL_ITEM, AGED_BRIE, BACKSTAGE_PASSES, SULFURAS
+
+class ItemBuilder:
+    """Builder for creating test Item instances with fluent API."""
+    
+    def __init__(self):
+        self._name = NORMAL_ITEM
+        self._sell_in = 5
+        self._quality = 10
+    
+    @staticmethod
+    def an_item():
+        """Start building a new item."""
+        return ItemBuilder()
+    
+    def with_name(self, name: str):
+        """Set item name."""
+        self._name = name
+        return self
+    
+    def with_sell_in(self, sell_in: int):
+        """Set sell_in days."""
+        self._sell_in = sell_in
+        return self
+    
+    def with_quality(self, quality: int):
+        """Set quality value."""
+        self._quality = quality
+        return self
+    
+    # Convenience methods
+    def as_aged_brie(self):
+        """Configure as Aged Brie."""
+        self._name = AGED_BRIE
+        return self
+    
+    def as_backstage_pass(self):
+        """Configure as Backstage Pass."""
+        self._name = BACKSTAGE_PASSES
+        return self
+    
+    def as_sulfuras(self):
+        """Configure as Sulfuras."""
+        self._name = SULFURAS
+        self._quality = 80  # Sulfuras always 80
+        return self
+    
+    def expired(self):
+        """Set as expired (negative sell_in)."""
+        self._sell_in = -1
+        return self
+    
+    def at_max_quality(self):
+        """Set quality to maximum."""
+        self._quality = 50
+        return self
+    
+    def at_min_quality(self):
+        """Set quality to minimum."""
+        self._quality = 0
+        return self
+    
+    def build(self):
+        """Build the Item instance."""
+        return Item(self._name, self._sell_in, self._quality)
+
+# Usage in tests - CLEAN AND READABLE
+def test_normal_item_quality_decreases():
+    """Normal items decrease quality by 1 before sell date."""
+    item = ItemBuilder.an_item().build()  # Uses defaults
+    gilded_rose = GildedRose([item])
+    
+    gilded_rose.update_quality()
+    
+    assert item.quality == 9
+
+def test_aged_brie_increases():
+    """Aged Brie increases in quality."""
+    item = ItemBuilder.an_item().as_aged_brie().with_quality(20).build()
+    gilded_rose = GildedRose([item])
+    
+    gilded_rose.update_quality()
+    
+    assert item.quality == 21
+
+def test_expired_item_double_decay():
+    """Expired items degrade twice as fast."""
+    item = ItemBuilder.an_item().expired().build()
+    gilded_rose = GildedRose([item])
+    
+    gilded_rose.update_quality()
+    
+    assert item.quality == 8  # Decreased by 2
+```
+
+#### REQUIRED #2: Constants Module
+
+**YOU MUST create constants.py with all magic values.**
+
+```python
+# constants.py (CREATE THIS FIRST)
+"""Constants for Gilded Rose business rules."""
+
+# Item names
+NORMAL_ITEM = "Normal Item"
+AGED_BRIE = "Aged Brie"
+BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert"
+SULFURAS = "Sulfuras, Hand of Ragnaros"
+CONJURED = "Conjured"
+
+# Quality constraints
+MAX_QUALITY = 50
+MIN_QUALITY = 0
+SULFURAS_QUALITY = 80
+
+# Time thresholds
+TRANSITION_DAY = 0
+BACKSTAGE_THRESHOLD_1 = 10  # +2 quality
+BACKSTAGE_THRESHOLD_2 = 5   # +3 quality
+
+# Quality changes
+NORMAL_DEGRADATION = 1
+EXPIRED_MULTIPLIER = 2
+AGED_BRIE_INCREASE = 1
+BACKSTAGE_BASE_INCREASE = 1
+BACKSTAGE_MEDIUM_INCREASE = 2
+BACKSTAGE_HIGH_INCREASE = 3
+```
+
+#### REQUIRED #3: Base Test Class with setUp
+
+```python
+import unittest
+from gilded_rose import GildedRose
+from test_builders import ItemBuilder
+from constants import *
+
+class GildedRoseTestBase(unittest.TestCase):
+    """Base class for Gilded Rose tests with common setup."""
+    
+    def setUp(self):
+        """Set up test fixtures."""
+        self.builder = ItemBuilder()
+    
+    def update_quality(self, item, days=1):
+        """Helper to update quality for specified days."""
+        gilded_rose = GildedRose([item])
+        for _ in range(days):
+            gilded_rose.update_quality()
+        return item
+    
+    def assert_item_state(self, item, expected_quality, expected_sell_in, message=""):
+        """Assert both quality and sell_in values."""
+        self.assertEqual(expected_quality, item.quality, 
+                        f"{message} - Quality mismatch")
+        self.assertEqual(expected_sell_in, item.sell_in,
+                        f"{message} - SellIn mismatch")
+
+# Usage
+class TestNormalItems(GildedRoseTestBase):
+    def test_quality_decreases_before_sell_date(self):
+        """Normal items lose 1 quality per day before sell date."""
+        item = self.builder.an_item().with_quality(10).with_sell_in(5).build()
+        
+        self.update_quality(item)
+        
+        self.assert_item_state(item, 9, 4, "After 1 day")
+```
+
 ---
 
 ## TEST PATTERNS TO APPLY
 
-### Pattern 1: Object Mother
+### Pattern 1: Object Mother (Use with Builder)
 **Purpose**: Centralize creation of complex test objects in reusable factories.
 
 **When to use**: When multiple tests need the same complex object setup.
@@ -320,17 +602,24 @@ test_expiredItem_doubleDecay() {
 
 ## TEST GENERATION CHECKLIST
 
-### 1. TEST FRAMEWORK SETUP
+### 1. MANDATORY INFRASTRUCTURE (DO THIS FIRST)
+- [ ] **CREATE constants.py** with all item names and magic values
+- [ ] **CREATE test_builders.py** with ItemBuilder class
+- [ ] **CREATE base test class** with setUp() and helper methods
+- [ ] Verify no hardcoded strings or magic numbers in infrastructure
+
+### 2. TEST FRAMEWORK SETUP
 - [ ] Identify appropriate test framework for language (JUnit, pytest, NUnit, etc.)
 - [ ] Set up test file structure following conventions
-- [ ] Import necessary testing utilities
+- [ ] Import necessary testing utilities (including builders and constants)
 - [ ] Configure test runner if needed
 
-### 2. TEST ORGANIZATION STRATEGY
+### 3. TEST ORGANIZATION STRATEGY
 - [ ] Group tests by item type or feature
 - [ ] Use descriptive test class/suite names
 - [ ] Follow naming convention: `test_<scenario>_<expected_behavior>`
-- [ ] Organize with setup/teardown methods if needed
+- [ ] All test classes inherit from base test class
+- [ ] **USE ItemBuilder in EVERY test** (no direct Item() instantiation)
 
 ### 3. COVERAGE REQUIREMENTS
 
