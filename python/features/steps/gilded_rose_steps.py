@@ -122,7 +122,7 @@ def step_given_many_items(context, count):
     context.gilded_rose = GildedRose(context.items)
 
 
-@given("the following items in inventory")
+@given("the following items in inventory:")
 def step_given_items_table(context):
     """Create items from a data table."""
     context.items = []
@@ -134,12 +134,13 @@ def step_given_items_table(context):
     context.gilded_rose = GildedRose(context.items)
 
 
-@then("the items should have the following properties")
+@then("the items should have the following properties:")
 def step_then_items_properties_table(context):
     """Verify items match expected properties from table."""
-    assert len(context.items) == len(context.table), f"Item count mismatch: expected {len(context.table)}, got {len(context.items)}"
+    table_rows = list(context.table)
+    assert len(context.items) == len(table_rows), f"Item count mismatch: expected {len(table_rows)}, got {len(context.items)}"
 
-    for i, row in enumerate(context.table):
+    for i, row in enumerate(table_rows):
         expected_name = row["name"]
         expected_sell_in = int(row["sellIn"])
         expected_quality = int(row["quality"])

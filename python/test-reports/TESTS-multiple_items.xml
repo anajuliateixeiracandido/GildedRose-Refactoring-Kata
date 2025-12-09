@@ -1,4 +1,4 @@
-<testsuite name="multiple_items.Multiple Items Update Independently" tests="6" errors="3" failures="0" skipped="0" time="0.000809" timestamp="2025-12-08T21:59:06.859940" hostname="2213MARCELLACOSTA.local"><testcase classname="multiple_items.Multiple Items Update Independently" name="Multiple items of different types update independently" status="passed" time="0.000272"><system-out>
+<testsuite name="multiple_items.Multiple Items Update Independently" tests="6" errors="0" failures="0" skipped="0" time="0.005303" timestamp="2025-12-08T23:14:19.956018" hostname="2445ANACANDIDO.local"><testcase classname="multiple_items.Multiple Items Update Independently" name="Multiple items of different types update independently" status="passed" time="0.000779"><system-out>
 <![CDATA[
 @scenario.begin
 
@@ -12,31 +12,21 @@
 @scenario.end
 --------------------------------------------------------------------------------
 ]]>
-</system-out></testcase><testcase classname="multiple_items.Multiple Items Update Independently" name="All item types in one inventory update correctly" status="error" time="5.3e-05"><error type="NoneType" message="None">
-<![CDATA[
-Failing step: Given the following items in inventory: ... undefined in 0.000s
-  | name                                      | sellIn | quality |
-  | Normal Item                               | 5      | 10      |
-  | Aged Brie                                 | 5      | 10      |
-  | Sulfuras, Hand of Ragnaros                | 5      | 80      |
-  | Backstage passes to a TAFKAL80ETC concert | 5      | 10      |
-Location: features/multiple_items.feature:18
-None]]>
-</error><system-out>
+</system-out></testcase><testcase classname="multiple_items.Multiple Items Update Independently" name="All item types in one inventory update correctly" status="passed" time="0.00084"><system-out>
 <![CDATA[
 @scenario.begin
 
   @integration @all_types
   Scenario: All item types in one inventory update correctly
     Given the Gilded Rose inventory system ... passed in 0.000s
-    Given the following items in inventory: ... undefined in 0.000s
+    Given the following items in inventory: ... passed in 0.000s
       | name                                      | sellIn | quality |
       | Normal Item                               | 5      | 10      |
       | Aged Brie                                 | 5      | 10      |
       | Sulfuras, Hand of Ragnaros                | 5      | 80      |
       | Backstage passes to a TAFKAL80ETC concert | 5      | 10      |
-    When the system updates quality ... skipped in 0.000s
-    Then the items should have the following properties: ... undefined in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the items should have the following properties: ... passed in 0.000s
       | name                                      | sellIn | quality |
       | Normal Item                               | 4      | 9       |
       | Aged Brie                                 | 4      | 11      |
@@ -46,7 +36,7 @@ None]]>
 @scenario.end
 --------------------------------------------------------------------------------
 ]]>
-</system-out></testcase><testcase classname="multiple_items.Multiple Items Update Independently" name="Empty inventory doesn't crash the system" status="passed" time="0.000169"><system-out>
+</system-out></testcase><testcase classname="multiple_items.Multiple Items Update Independently" name="Empty inventory doesn't crash the system" status="passed" time="0.000489"><system-out>
 <![CDATA[
 @scenario.begin
 
@@ -60,7 +50,7 @@ None]]>
 @scenario.end
 --------------------------------------------------------------------------------
 ]]>
-</system-out></testcase><testcase classname="multiple_items.Multiple Items Update Independently" name="Large inventory updates efficiently" status="passed" time="0.000222"><system-out>
+</system-out></testcase><testcase classname="multiple_items.Multiple Items Update Independently" name="Large inventory updates efficiently" status="passed" time="0.00068"><system-out>
 <![CDATA[
 @scenario.begin
 
@@ -75,31 +65,14 @@ None]]>
 @scenario.end
 --------------------------------------------------------------------------------
 ]]>
-</system-out></testcase><testcase classname="multiple_items.Multiple Items Update Independently" name="Items at different lifecycle stages update correctly" status="error" time="4.7e-05"><error type="NoneType" message="None">
-<![CDATA[
-Failing step: Given the following items in inventory: ... undefined in 0.000s
-  | name                                      | sellIn | quality | description        |
-  | Normal Item                               | 10     | 20      | Well before sell   |
-  | Normal Item                               | 0      | 15      | On sell date       |
-  | Normal Item                               | -5     | 10      | Well past sell     |
-  | Aged Brie                                 | 10     | 30      | Before sell        |
-  | Aged Brie                                 | -5     | 40      | Past sell          |
-  | Backstage passes to a TAFKAL80ETC concert | 15     | 20      | Far from concert   |
-  | Backstage passes to a TAFKAL80ETC concert | 10     | 25      | 10 days to concert |
-  | Backstage passes to a TAFKAL80ETC concert | 5      | 30      | 5 days to concert  |
-  | Backstage passes to a TAFKAL80ETC concert | 0      | 35      | Concert day        |
-  | Backstage passes to a TAFKAL80ETC concert | -1     | 40      | After concert      |
-  | Sulfuras, Hand of Ragnaros                | 0      | 80      | Legendary          |
-Location: features/multiple_items.feature:47
-None]]>
-</error><system-out>
+</system-out></testcase><testcase classname="multiple_items.Multiple Items Update Independently" name="Items at different lifecycle stages update correctly" status="passed" time="0.001113"><system-out>
 <![CDATA[
 @scenario.begin
 
   @integration @mixed_states
   Scenario: Items at different lifecycle stages update correctly
     Given the Gilded Rose inventory system ... passed in 0.000s
-    Given the following items in inventory: ... undefined in 0.000s
+    Given the following items in inventory: ... passed in 0.000s
       | name                                      | sellIn | quality | description        |
       | Normal Item                               | 10     | 20      | Well before sell   |
       | Normal Item                               | 0      | 15      | On sell date       |
@@ -112,35 +85,26 @@ None]]>
       | Backstage passes to a TAFKAL80ETC concert | 0      | 35      | Concert day        |
       | Backstage passes to a TAFKAL80ETC concert | -1     | 40      | After concert      |
       | Sulfuras, Hand of Ragnaros                | 0      | 80      | Legendary          |
-    When the system updates quality ... skipped in 0.000s
-    Then each item should update according to its state and type ... skipped in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then each item should update according to its state and type ... passed in 0.000s
 
 @scenario.end
 --------------------------------------------------------------------------------
 ]]>
-</system-out></testcase><testcase classname="multiple_items.Multiple Items Update Independently" name="Item update order doesn't affect results" status="error" time="4.6e-05"><error type="NoneType" message="None">
-<![CDATA[
-Failing step: Given the following items in inventory: ... undefined in 0.000s
-  | name   | sellIn | quality |
-  | Item A | 5      | 10      |
-  | Item B | 3      | 8       |
-  | Item C | 7      | 15      |
-Location: features/multiple_items.feature:65
-None]]>
-</error><system-out>
+</system-out></testcase><testcase classname="multiple_items.Multiple Items Update Independently" name="Item update order doesn't affect results" status="passed" time="0.001402"><system-out>
 <![CDATA[
 @scenario.begin
 
   @regression @order_independence
   Scenario: Item update order doesn't affect results
-    Given the Gilded Rose inventory system ... passed in 0.000s
-    Given the following items in inventory: ... undefined in 0.000s
+    Given the Gilded Rose inventory system ... passed in 0.001s
+    Given the following items in inventory: ... passed in 0.000s
       | name   | sellIn | quality |
       | Item A | 5      | 10      |
       | Item B | 3      | 8       |
       | Item C | 7      | 15      |
-    When the system updates quality ... skipped in 0.000s
-    Then the update order should not affect the final quality values ... skipped in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the update order should not affect the final quality values ... passed in 0.000s
 
 @scenario.end
 --------------------------------------------------------------------------------
