@@ -1,0 +1,400 @@
+<testsuite name="backstage_passes.Backstage Pass Concert Ticket Dynamics" tests="26" errors="0" failures="0" skipped="0" time="0.005733" timestamp="2025-12-08T21:59:06.852131" hostname="2213MARCELLACOSTA.local"><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass increases by 1 when concert is far (&gt;10 days)" status="passed" time="0.000247"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @smoke @far_from_concert
+  Scenario: Backstage pass increases by 1 when concert is far (>10 days)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 15 and quality 20 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 21 ... passed in 0.000s
+    And the sellIn should be 14 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass crossing 11→10 threshold gets +1 (not +2 yet)" status="passed" time="0.000175"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @threshold @critical
+  Scenario: Backstage pass crossing 11→10 threshold gets +1 (not +2 yet)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 11 and quality 20 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 21 ... passed in 0.000s
+    And the sellIn should be 10 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass increases by 2 when 10 days or less" status="passed" time="0.000171"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @moderate_urgency
+  Scenario: Backstage pass increases by 2 when 10 days or less
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 10 and quality 20 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 22 ... passed in 0.000s
+    And the sellIn should be 9 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass crossing 6→5 threshold gets +2 (not +3 yet)" status="passed" time="0.000169"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @threshold @critical
+  Scenario: Backstage pass crossing 6→5 threshold gets +2 (not +3 yet)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 6 and quality 20 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 22 ... passed in 0.000s
+    And the sellIn should be 5 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass increases by 3 when 5 days or less" status="passed" time="0.000181"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @high_urgency
+  Scenario: Backstage pass increases by 3 when 5 days or less
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 5 and quality 20 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 23 ... passed in 0.000s
+    And the sellIn should be 4 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass on concert day (sellIn=0) drops to 0 after update" status="passed" time="0.000204"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @critical @concert_day
+  Scenario: Backstage pass on concert day (sellIn=0) drops to 0 after update
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 0 and quality 20 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 0 ... passed in 0.000s
+    And the sellIn should be -1 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass after concert has quality 0" status="passed" time="0.000209"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @expired @worthless
+  Scenario: Backstage pass after concert has quality 0
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn -1 and quality 20 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 0 ... passed in 0.000s
+    And the sellIn should be -2 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality 48 with +3 increment caps at 50" status="passed" time="0.000167"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @edge_case @quality_ceiling
+  Scenario: Backstage pass quality 48 with +3 increment caps at 50
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 5 and quality 48 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 50 ... passed in 0.000s
+    And the sellIn should be 4 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality 49 with +2 increment caps at 50" status="passed" time="0.000177"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @edge_case @quality_ceiling
+  Scenario: Backstage pass quality 49 with +2 increment caps at 50
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 10 and quality 49 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 50 ... passed in 0.000s
+    And the sellIn should be 9 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality 47 with +3 increment caps at 50" status="passed" time="0.000201"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @edge_case @quality_ceiling
+  Scenario: Backstage pass quality 47 with +3 increment caps at 50
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 5 and quality 47 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 50 ... passed in 0.000s
+    And the sellIn should be 4 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass starting at quality 0 increases by 3" status="passed" time="0.000173"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @edge_case @quality_floor
+  Scenario: Backstage pass starting at quality 0 increases by 3
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 5 and quality 0 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 3 ... passed in 0.000s
+    And the sellIn should be 4 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass at max quality doesn't exceed 50" status="passed" time="0.000174"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @edge_case @quality_ceiling
+  Scenario: Backstage pass at max quality doesn't exceed 50
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 5 and quality 50 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 50 ... passed in 0.000s
+    And the sellIn should be 4 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass 1 day before concert increases by 3" status="passed" time="0.000185"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @edge_case @last_minute
+  Scenario: Backstage pass 1 day before concert increases by 3
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 1 and quality 20 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 23 ... passed in 0.000s
+    And the sellIn should be 0 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality progression from 15 days to concert" status="passed" time="0.00052"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @time_progression @full_journey
+  Scenario: Backstage pass quality progression from 15 days to concert
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 15 and quality 20 ... passed in 0.000s
+    When 5 days pass ... passed in 0.000s
+    Then the quality should be 25 ... passed in 0.000s
+    And the sellIn should be 10 ... passed in 0.000s
+    When 5 days pass ... passed in 0.000s
+    Then the quality should be 35 ... passed in 0.000s
+    And the sellIn should be 5 ... passed in 0.000s
+    When 5 days pass ... passed in 0.000s
+    Then the quality should be 50 ... passed in 0.000s
+    And the sellIn should be 0 ... passed in 0.000s
+    When 1 day passes ... passed in 0.000s
+    Then the quality should be 0 ... passed in 0.000s
+    And the sellIn should be -1 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @1.1 Far from concert (&gt;10 days)" status="passed" time="0.000206"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @1.1 Far from concert (>10 days)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 15 and quality 20 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 21 ... passed in 0.000s
+    And the sellIn should be 14 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @1.2 Far from concert (&gt;10 days)" status="passed" time="0.000182"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @1.2 Far from concert (>10 days)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 12 and quality 30 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 31 ... passed in 0.000s
+    And the sellIn should be 11 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @1.3 Far from concert (&gt;10 days)" status="passed" time="0.000173"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @1.3 Far from concert (>10 days)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 11 and quality 40 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 41 ... passed in 0.000s
+    And the sellIn should be 10 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @2.1 10 days or less (6-10 days)" status="passed" time="0.000169"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @2.1 10 days or less (6-10 days)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 10 and quality 20 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 22 ... passed in 0.000s
+    And the sellIn should be 9 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @2.2 10 days or less (6-10 days)" status="passed" time="0.000239"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @2.2 10 days or less (6-10 days)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 8 and quality 25 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 27 ... passed in 0.000s
+    And the sellIn should be 7 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @2.3 10 days or less (6-10 days)" status="passed" time="0.000187"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @2.3 10 days or less (6-10 days)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 6 and quality 35 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 37 ... passed in 0.000s
+    And the sellIn should be 5 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @3.1 5 days or less (1-5 days)" status="passed" time="0.000195"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @3.1 5 days or less (1-5 days)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 5 and quality 20 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 23 ... passed in 0.000s
+    And the sellIn should be 4 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @3.2 5 days or less (1-5 days)" status="passed" time="0.000601"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @3.2 5 days or less (1-5 days)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 3 and quality 30 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 33 ... passed in 0.000s
+    And the sellIn should be 2 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @3.3 5 days or less (1-5 days)" status="passed" time="0.000191"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @3.3 5 days or less (1-5 days)
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 1 and quality 40 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 43 ... passed in 0.000s
+    And the sellIn should be 0 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @4.1 Concert day and after" status="passed" time="0.000175"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @4.1 Concert day and after
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn 0 and quality 45 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 0 ... passed in 0.000s
+    And the sellIn should be -1 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @4.2 Concert day and after" status="passed" time="0.000271"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @4.2 Concert day and after
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn -1 and quality 40 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 0 ... passed in 0.000s
+    And the sellIn should be -2 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="backstage_passes.Backstage Pass Concert Ticket Dynamics" name="Backstage pass quality at different time periods -- @4.3 Concert day and after" status="passed" time="0.00019"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @scenario_outline @quality_progression
+  Scenario Outline: Backstage pass quality at different time periods -- @4.3 Concert day and after
+    Given the Gilded Rose inventory system ... passed in 0.000s
+    Given a Backstage pass with sellIn -5 and quality 30 ... passed in 0.000s
+    When the system updates quality ... passed in 0.000s
+    Then the quality should be 0 ... passed in 0.000s
+    And the sellIn should be -6 ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>

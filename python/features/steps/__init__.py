@@ -1,1 +1,1 @@
-# BDD Step Definitions Package
+# Behave steps package

@@ -8,6 +8,12 @@ This test suite provides 100% code coverage including:
 - Backstage passes concert dynamics
 - Quality boundary enforcement
 - Edge cases and transitions
+
+Coverage Requirements:
+- 100% Line Coverage
+- 100% Branch Coverage
+- All 17 business rules tested
+- All 16 edge cases covered
 """
 import unittest
 
@@ -54,6 +60,14 @@ class GildedRoseTest(unittest.TestCase):
     def test_normal_item_quality_1_after_sell_date(self):
         """Normal item with quality 1 after sell date goes to 0, not negative."""
         items = [Item("Normal Item", -1, 1)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertEqual(0, items[0].quality)
+        self.assertEqual(-2, items[0].sell_in)
+
+    def test_normal_item_quality_2_after_sell_date(self):
+        """Normal item with quality 2 after sell date goes to 0."""
+        items = [Item("Normal Item", -1, 2)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
         self.assertEqual(0, items[0].quality)
@@ -112,6 +126,14 @@ class GildedRoseTest(unittest.TestCase):
     def test_aged_brie_quality_49_after_sell(self):
         """Aged Brie at quality 49 after sell date caps at 50 (not 51)."""
         items = [Item("Aged Brie", -1, 49)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertEqual(50, items[0].quality)
+        self.assertEqual(-2, items[0].sell_in)
+
+    def test_aged_brie_quality_48_after_sell(self):
+        """Aged Brie at quality 48 after sell date caps at 50."""
+        items = [Item("Aged Brie", -1, 48)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
         self.assertEqual(50, items[0].quality)
@@ -210,7 +232,7 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(4, items[0].sell_in)
 
     def test_backstage_pass_on_concert_day(self):
-        """Backstage pass on concert day (sell_in=0) drops to 0 after increases."""
+        """Backstage pass on concert day (sell_in=0) drops to 0 after update."""
         items = [Item("Backstage passes to a TAFKAL80ETC concert", 0, 20)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
@@ -265,6 +287,14 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(50, items[0].quality)
         self.assertEqual(4, items[0].sell_in)
 
+    def test_backstage_pass_1_day_before_concert(self):
+        """Backstage pass 1 day before concert increases by 3."""
+        items = [Item("Backstage passes to a TAFKAL80ETC concert", 1, 20)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertEqual(23, items[0].quality)
+        self.assertEqual(0, items[0].sell_in)
+
     # ==================== MULTIPLE ITEMS ====================
 
     def test_multiple_items_update_independently(self):
@@ -278,36 +308,17 @@ class GildedRoseTest(unittest.TestCase):
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
 
-        self.assertEqual(9, items[0].quality)  # Normal: -1
+        self.assertEqual(9, items[0].quality)   # Normal: -1
         self.assertEqual(11, items[1].quality)  # Aged Brie: +1
         self.assertEqual(80, items[2].quality)  # Sulfuras: no change
         self.assertEqual(13, items[3].quality)  # Backstage: +3
 
-    # ==================== EDGE CASES ====================
-
-    def test_backstage_pass_1_day_before_concert(self):
-        """Backstage pass 1 day before concert increases by 3."""
-        items = [Item("Backstage passes to a TAFKAL80ETC concert", 1, 20)]
+    def test_empty_items_list(self):
+        """Empty items list doesn't crash."""
+        items = []
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
-        self.assertEqual(23, items[0].quality)
-        self.assertEqual(0, items[0].sell_in)
-
-    def test_normal_item_quality_2_after_sell_date(self):
-        """Normal item with quality 2 after sell date goes to 0."""
-        items = [Item("Normal Item", -1, 2)]
-        gilded_rose = GildedRose(items)
-        gilded_rose.update_quality()
-        self.assertEqual(0, items[0].quality)
-        self.assertEqual(-2, items[0].sell_in)
-
-    def test_aged_brie_quality_48_after_sell(self):
-        """Aged Brie at quality 48 after sell date caps at 50."""
-        items = [Item("Aged Brie", -1, 48)]
-        gilded_rose = GildedRose(items)
-        gilded_rose.update_quality()
-        self.assertEqual(50, items[0].quality)
-        self.assertEqual(-2, items[0].sell_in)
+        self.assertEqual(0, len(items))
 
     # ==================== MULTI-DAY PROGRESSION ====================
 
