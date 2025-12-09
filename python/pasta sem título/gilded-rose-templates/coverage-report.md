@@ -39,7 +39,7 @@ STATUS: ✅ 100% COVERAGE ACHIEVED
 | File | Line Coverage | Branch Coverage | Method Coverage | Status |
 |------|---------------|-----------------|-----------------|--------|
 | gilded_rose.[ext] | 100% (XX/XX) | 100% (XX/XX) | 100% (X/X) | ✅ |
-| texttest_fixture.[ext] | 100% (XX/XX) | N/A | 100% (X/X) | ✅ |
+| item.[ext] | 100% (XX/XX) | N/A | 100% (X/X) | ✅ |
 | [updaters].[ext] | 100% (XX/XX) | 100% (XX/XX) | 100% (X/X) | ✅ |
 
 ---
